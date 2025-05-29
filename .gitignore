@@ -1,0 +1,45 @@
+# --- Global ---
+.env
+*.env
+*.log
+*.DS_Store
+node_modules/
+__pycache__/
+*.py[cod]
+.Python
+*.sqlite3
+
+# --- Frontend (Next.js) ---
+client/.next/
+client/node_modules/
+client/dist/
+client/out/
+client/.turbo/
+client/.env.local
+client/.env.development.local
+client/.env.production.local
+
+# VSCode and IDEs
+client/.vscode/
+client/.idea/
+
+# --- Backend (Python FastAPI) ---
+server/__pycache__/
+server/*.py[cod]
+server/venv/
+server/env/
+server/.env
+server/.vscode/
+server/.idea/
+
+# --- Docker ---
+*.pid
+*.sock
+docker-compose.override.yml
+
+# --- OS Specific ---
+Thumbs.db
+ehthumbs.db
+Icon?
+.DS_Store
+
