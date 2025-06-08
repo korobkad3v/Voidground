@@ -6,13 +6,14 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-col justify-center items-center h-screen relative">
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 z-0">
           <Particles 
           moveParticlesOnHover={true}
+          particleColors={["#babdc2", "#484b55"]}
           />
         </div>
         
-        <main className="h-full flex flex-col items-center justify-center">
+        <main className="h-full flex flex-col items-center justify-center pointer-events-auto z-1">
           <DragDropArea />
         </main>
       </div>

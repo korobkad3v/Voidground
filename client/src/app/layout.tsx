@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${robotoMono.variable} ${robotoMono.variable} antialiased`}
+        className={`${robotoMono.variable} ${robotoMono.variable} antialiased overflow-x-hidden`}
       >
         <Header />
         {children}
