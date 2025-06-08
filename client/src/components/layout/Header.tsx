@@ -1,9 +1,9 @@
 // Header.tsx
-import Heading from "@/app/components/Heading/Heading";
+import Heading from "@/components/ui/Heading/Heading";
 
 export default function Header() {
     return (
-        <header className="flex items-center justify-center mt-[100px] min-h-[60px]">
+        <header className="fixed w-full flex items-center justify-center top-[100px] min-h-[60px] z-10">
             <Heading level={1} className="text-4xl font-semibold w-full text-center">Voidground(0)</Heading>
         </header>
     );
