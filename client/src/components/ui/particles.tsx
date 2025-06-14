@@ -2,6 +2,7 @@
 import { useEffect, useRef, FC } from "react";
 import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
 import { gsap } from "gsap";
+import { PARTICLES_CONST } from "@/constants/PARTICLES_CONST";
 
 export interface ParticlesProps {
   particleCount?: number;
@@ -99,8 +100,8 @@ export const Particles: FC<ParticlesProps> = ({
   particleCount = 200,
   particleSpread = 10,
   speed = 0.1,
-  particleColors,
-  moveParticlesOnHover = false,
+  particleColors = PARTICLES_CONST.colors,
+  moveParticlesOnHover = PARTICLES_CONST.moveParticlesOnHover,
   particleHoverFactor = 1,
   alphaParticles = false,
   particleBaseSize = 100,

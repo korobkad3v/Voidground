@@ -1,6 +1,6 @@
 import Image from "next/image";
 import DragDropArea from "../components/ui/dragNdrop/dragDropArea";
-import { PARTICLES_CONST } from "@/constants/PARTICLES_CONST";
+
 import {Particles} from "../components/ui/particles";
 export default function Home() {
   return (
@@ -8,10 +8,7 @@ export default function Home() {
       <div className="flex flex-col justify-center items-center h-screen relative"  >
         
         <div className="absolute inset-0 z-0 ">
-          <Particles 
-          moveParticlesOnHover={PARTICLES_CONST.moveParticlesOnHover}
-          particleColors={PARTICLES_CONST.colors}
-          />
+          <Particles />
         </div>
         
         <main className="h-full flex flex-col items-center justify-center pointer-events-auto z-1" 
