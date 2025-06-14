@@ -3,7 +3,7 @@ import { useEffect, useRef, FC } from "react";
 import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
 import { gsap } from "gsap";
 
-interface ComponentProps {
+export interface ParticlesProps {
   particleCount?: number;
   particleSpread?: number;
   speed?: number;
@@ -95,7 +95,7 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-export const Particles: FC<ComponentProps> = ({
+export const Particles: FC<ParticlesProps> = ({
   particleCount = 200,
   particleSpread = 10,
   speed = 0.1,
