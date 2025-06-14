@@ -57,46 +57,47 @@ export default function DragDropArea({
   };
 
   const handleFiles = (fileList: FileList) => {
-  setFiles((prev) => {
-    const newFiles: FileItem[] = [];
-    const currentCount = prev.length;
+    setFiles((prev) => {
+      const newFiles: FileItem[] = [];
+      const currentCount = prev.length;
 
-    Array.from(fileList).forEach((file) => {
-      const isAccepted =
-        acceptedTypes.length === 0 ||
-        acceptedTypes.some((type) => {
-          if (type.endsWith("/*")) {
-            const baseType = type.split("/")[0];
-            return file.type.startsWith(baseType + "/");
-          }
-          return file.type === type;
-        });
+      Array.from(fileList).forEach((file) => {
+        const isAccepted =
+          acceptedTypes.length === 0 ||
+          acceptedTypes.some((type) => {
+            if (type.endsWith("/*")) {
+              const baseType = type.split("/")[0];
+              return file.type.startsWith(baseType + "/");
+            }
+            return file.type === type;
+          });
 
-      if (isAccepted && currentCount + newFiles.length < maxFiles) {
-        newFiles.push({
-          id: uuidv4(),
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          status: "uploading",
-          progress: 0,
-          previewUrl: URL.createObjectURL(file),
-        });
+        if (isAccepted) {
+          newFiles.push({
+            id: uuidv4(),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            status: "uploading",
+            progress: 0,
+            previewUrl: URL.createObjectURL(file),
+          });
+        }
+      });
+
+      const combined = [...prev, ...newFiles];
+
+      const updatedFiles = combined.slice(-maxFiles);
+      
+      newFiles.forEach((file) => simulateUpload(file.id));
+
+      if (onFilesAdded) {
+        onFilesAdded(fileList);
       }
+
+      return updatedFiles;
     });
-
-    const updatedFiles = [...prev, ...newFiles].slice(0, maxFiles);
-    console.log(updatedFiles);
-    newFiles.forEach((file) => simulateUpload(file.id));
-
-    if (onFilesAdded) {
-      onFilesAdded(fileList);
-    }
-
-    return updatedFiles;
-  });
-};
-
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -126,46 +127,51 @@ export default function DragDropArea({
   const openFileDialog = () => inputRef.current?.click();
 
   return (
-  <div className={cn("space-y-4 flex flex-col items-center", className)}>
-    {files.length === 0 ? (
-      <div
-        ref={dropZoneRef}
-        onClick={openFileDialog}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`w-48 h-48 rounded-full border-4 border-dashed flex items-center justify-center text-center cursor-pointer transition-colors duration-300 ${
-          isDragging ? "border-blue-500 bg-blue-100" : "border-gray-300"
-        }`}
-      >
-        <input
-          type="file"
-          ref={inputRef}
-          multiple={maxFiles > 1}
-          hidden
-          accept={acceptedTypes.join(",")}
-          onChange={handleFileSelect}
-        />
-        <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: isDragging ? 1.1 : 1 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <Upload className="w-8 h-8 mb-2 mx-auto" />
-          <p className="text-sm px-2">Click or drag files here</p>
-        </motion.div>
-      </div>
-    ) : (
-      <div className="relative w-48 h-48 rounded overflow-hidden cursor-pointer" onClick={openFileDialog}>
-        <Image
-          src={files[0].previewUrl!}
-          alt={files[0].name}
-          fill
-          style={{ objectFit: "cover" }}
-          priority
-        />
-      </div>
-    )}
-  </div>
-);
+    <div className={cn("space-y-4 flex flex-col items-center", className)}>
+      <input
+        type="file"
+        ref={inputRef}
+        multiple={maxFiles > 1}
+        hidden
+        accept={acceptedTypes.join(",")}
+        onChange={handleFileSelect}
+      />
+
+      {files.length === 0 ? (
+        <div
+          ref={dropZoneRef}
+          onClick={openFileDialog}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={cn(
+            "w-48 h-48 rounded-full border-4 border-dashed flex items-center justify-center text-center cursor-pointer transition-colors duration-300",
+            isDragging ? "border-blue-500 bg-blue-100" : "border-gray-300"
+          )}>
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: isDragging ? 1.1 : 1 }}
+            transition={{ type: "spring", stiffness: 300 }}>
+            <Upload className="w-8 h-8 mb-2 mx-auto" />
+            <p className="text-sm px-2">Click or drag files here</p>
+          </motion.div>
+        </div>
+      ) : (
+        <div
+          className="max-w-lg max-h-[512px] rounded overflow-hidden cursor-pointer border"
+          onClick={openFileDialog}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          >
+            
+          <img
+            src={files[0].previewUrl!}
+            alt={files[0].name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+    </div>
+  );
 }
