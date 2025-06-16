@@ -6,8 +6,9 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
-import {uploadToBackend} from "@/lib/upload";
+import { uploadToBackend } from "@/lib/upload";
 import { DRAGNDROP_CONST } from "@/constants/DRAGNDROP_CONST";
+import Button from "../Button";
 interface FileItem {
   id: string;
   name: string;
@@ -90,21 +91,23 @@ export default function DragDropArea({
       const combined = [...prev, ...newFiles];
 
       const updatedFiles = combined.slice(-maxFiles);
-      
-      newFiles.forEach((fileItem) => uploadToBackend(fileItem.originalFile).then((url) => {
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileItem.id
-              ? {
-                  ...f,
-                  status: "completed",
-                  progress: 100,
-                  previewUrl: url,
-                }
-              : f
-          )
-        );
-      }));
+
+      newFiles.forEach((fileItem) =>
+        uploadToBackend(fileItem.originalFile).then((url) => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileItem.id
+                ? {
+                    ...f,
+                    status: "completed",
+                    progress: 100,
+                    previewUrl: url,
+                  }
+                : f
+            )
+          );
+        })
+      );
 
       if (onFilesAdded) {
         onFilesAdded(fileList);
@@ -118,25 +121,6 @@ export default function DragDropArea({
     if (e.target.files) {
       handleFiles(e.target.files);
     }
-  };
-
-  const simulateUpload = (id: string) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === id
-            ? {
-                ...f,
-                progress: progress >= 100 ? 100 : progress,
-                status: progress >= 100 ? "completed" : "uploading",
-              }
-            : f
-        )
-      );
-      progress += 10;
-      if (progress > 100) clearInterval(interval);
-    }, 100);
   };
 
   const openFileDialog = () => inputRef.current?.click();
@@ -161,7 +145,7 @@ export default function DragDropArea({
           onDrop={handleDrop}
           className={cn(
             "w-48 h-48 rounded-full border-4 border-dashed flex items-center justify-center text-center cursor-pointer transition-colors duration-300",
-            isDragging ? "border-blue-500 bg-blue-100" : "border-gray-300"
+            isDragging ? "bg-background-primary" : "border-gray-300"
           )}>
           <motion.div
             initial={{ scale: 1 }}
@@ -172,20 +156,28 @@ export default function DragDropArea({
           </motion.div>
         </div>
       ) : (
-        <div
-          className="max-w-lg max-h-[512px] rounded overflow-hidden cursor-pointer border"
-          onClick={openFileDialog}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          >
-            
-          <img
-            src={files[0].previewUrl!}
-            alt={files[0].name}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <>
+          <div
+            className="max-w-lg max-h-[512px] rounded overflow-hidden cursor-pointer border"
+            onClick={openFileDialog}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}>
+            {files[0].status === "uploading" && (
+              <div className="size-full bg-gray-200 animate-pulse rounded" />
+            )}
+            <img
+              src={files[0].previewUrl!}
+              alt={files[0].name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {files[0].status === "completed" && (
+            <a href={files[0].previewUrl!} download="processed-image.png">
+              <Button>Download Image</Button>
+            </a>
+          )}
+        </>
       )}
     </div>
   );
