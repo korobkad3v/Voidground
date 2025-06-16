@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
+import {uploadToBackend} from "@/lib/upload";
 import { DRAGNDROP_CONST } from "@/constants/DRAGNDROP_CONST";
 interface FileItem {
   id: string;
@@ -15,6 +16,7 @@ interface FileItem {
   status: "uploading" | "completed" | "error";
   progress: number;
   previewUrl?: string;
+  originalFile: File;
 }
 
 interface DropZoneProps {
@@ -59,7 +61,6 @@ export default function DragDropArea({
   const handleFiles = (fileList: FileList) => {
     setFiles((prev) => {
       const newFiles: FileItem[] = [];
-      const currentCount = prev.length;
 
       Array.from(fileList).forEach((file) => {
         const isAccepted =
@@ -81,6 +82,7 @@ export default function DragDropArea({
             status: "uploading",
             progress: 0,
             previewUrl: URL.createObjectURL(file),
+            originalFile: file,
           });
         }
       });
@@ -89,7 +91,20 @@ export default function DragDropArea({
 
       const updatedFiles = combined.slice(-maxFiles);
       
-      newFiles.forEach((file) => simulateUpload(file.id));
+      newFiles.forEach((fileItem) => uploadToBackend(fileItem.originalFile).then((url) => {
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileItem.id
+              ? {
+                  ...f,
+                  status: "completed",
+                  progress: 100,
+                  previewUrl: url,
+                }
+              : f
+          )
+        );
+      }));
 
       if (onFilesAdded) {
         onFilesAdded(fileList);
