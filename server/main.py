@@ -4,16 +4,15 @@ from fastapi.responses import StreamingResponse
 import io
 from rembg import remove
 from PIL import Image
-import config 
-
+from config import CONFIG
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=config.ALLOW_ORIGINS,  
-    allow_credentials=config.ALLOW_CREDENTIALS,
-    allow_methods=config.ALLOW_METHODS,
-    allow_headers=config.ALLOW_HEADERS,
+    allow_origins=CONFIG["ALLOW_ORIGINS"],  
+    allow_credentials=CONFIG["ALLOW_CREDENTIALS"],
+    allow_methods=CONFIG["ALLOW_METHODS"],
+    allow_headers=CONFIG["ALLOW_HEADERS"],
 )
 
 @app.post("/remove-background/")
